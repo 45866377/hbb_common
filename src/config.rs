@@ -786,6 +786,21 @@ impl Config {
         }
         #[cfg(not(any(target_os = "android", target_os = "ios")))]
         {
+            // 定制（便携模式）：Windows 下配置/日志全部写入 exe 运行目录
+            #[cfg(windows)]
+            {
+                if let Ok(exe) = std::env::current_exe() {
+                    if let Some(dir) = exe.parent() {
+                        let mut cfg_dir = dir.to_path_buf();
+                        cfg_dir.push("config");
+                        if std::fs::create_dir_all(&cfg_dir).is_ok() {
+                            let mut path = cfg_dir;
+                            path.push(p);
+                            return path;
+                        }
+                    }
+                }
+            }
             #[cfg(not(target_os = "macos"))]
             let org = "".to_owned();
             #[cfg(target_os = "macos")]
