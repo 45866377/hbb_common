@@ -778,6 +778,22 @@ impl Config {
     }
 
     pub fn path<P: AsRef<Path>>(p: P) -> PathBuf {
+        // todesk: portable mode - keep config under the exe directory on
+        // Windows so all files stay in the runtime directory
+        #[cfg(windows)]
+        {
+            if let Ok(exe) = std::env::current_exe() {
+                if let Some(dir) = exe.parent() {
+                    let mut cfg_dir = dir.to_path_buf();
+                    cfg_dir.push("config");
+                    if std::fs::create_dir_all(&cfg_dir).is_ok() {
+                        let mut path = cfg_dir;
+                        path.push(p);
+                        return path;
+                    }
+                }
+            }
+        }
         #[cfg(any(target_os = "android", target_os = "ios"))]
         {
             let mut path: PathBuf = APP_DIR.read().unwrap().clone().into();
