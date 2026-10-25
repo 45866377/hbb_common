@@ -114,8 +114,8 @@ const CHARS: &[char] = &[
     'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
 ];
 
-pub const RENDEZVOUS_SERVERS: &[&str] = &["rs-ny.rustdesk.com"];
-pub const RS_PUB_KEY: &str = "OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=";
+pub const RENDEZVOUS_SERVERS: &[&str] = &["8.155.163.97"];
+pub const RS_PUB_KEY: &str = "pjZYrutPudPs99ehq33IjmVPRGSxjWPmq1K3xp90lUQ=";
 
 pub const RENDEZVOUS_PORT: i32 = 21116;
 pub const RELAY_PORT: i32 = 21117;
@@ -786,21 +786,6 @@ impl Config {
         }
         #[cfg(not(any(target_os = "android", target_os = "ios")))]
         {
-            // 定制（便携模式）：Windows 下配置/日志全部写入 exe 运行目录
-            #[cfg(windows)]
-            {
-                if let Ok(exe) = std::env::current_exe() {
-                    if let Some(dir) = exe.parent() {
-                        let mut cfg_dir = dir.to_path_buf();
-                        cfg_dir.push("config");
-                        if std::fs::create_dir_all(&cfg_dir).is_ok() {
-                            let mut path = cfg_dir;
-                            path.push(p);
-                            return path;
-                        }
-                    }
-                }
-            }
             #[cfg(not(target_os = "macos"))]
             let org = "".to_owned();
             #[cfg(target_os = "macos")]
